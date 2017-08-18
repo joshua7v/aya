@@ -151,7 +151,9 @@ export class Aya {
     this._prepareAddons(item);
 
     if (isBrowser()) {
-      return console.log.bind(window.console, `%c${this._addons.join(' ')}${this._addons.length === 0 ? '' : ':'}`, this._browserMap[item.level], ...item.messages);
+      return item.level >= this._level
+        ? console.log.bind(window.console, `%c${this._addons.join(' ')}${this._addons.length === 0 ? '' : ':'}`, this._browserMap[item.level], ...item.messages)
+        : () => {};
     } else {
       const output = `${this._addons.join(' ')}${this._addons.length === 0 ? '' : ': '}${item.messages.map(x => util.inspect(x)).join(', ')}`;
       const chalk = this._chalkMap[item.level];
@@ -214,6 +216,8 @@ export class Aya {
     } else {
       this._level = level;
     }
+
+    isBrowser() && this._bindToConsoleLog();
   }
 
   on() {
